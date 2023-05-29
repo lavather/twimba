@@ -1,8 +1,6 @@
 import { tweetsData } from "./data.js";
 import {v4 as uuidv4} from "https://jspm.dev/uuid";
 
-var uuidOfTargetTweet=""
-
 document.addEventListener("click", function(e){
 
     if(e.target.dataset.like){
@@ -17,8 +15,8 @@ document.addEventListener("click", function(e){
     else if(e.target.id==="tweet-btn"){
         handleTweetBtnClick()
     }
-    else if(e.target.id==="reply-btn"){
-        handleTweetReplyClick(uuidOfTargetTweet)
+    else if(e.target.dataset.replybtn){
+        handleTweetReplyClick(e.target.dataset.replybtn)
     }
     else if(e.target.dataset.delete){
         handleDeleteClick(e.target.dataset.delete)
@@ -58,8 +56,6 @@ function handleRetweetClick(x){
 function handleReplyClick(x){
     
     document.getElementById(`replies-${x}`).classList.toggle("hidden")
-    uuidOfTargetTweet=x
-    console.log(uuidOfTargetTweet+"(this should be elons id)")
     
 }
 
@@ -95,39 +91,35 @@ function handleTweetBtnClick(){
         tweetInput.value=""
         
     } 
-
-    console.log(uuidOfTargetTweet +"(this should be empty)")
         
 }
 
 function handleTweetReplyClick(x){
-    console.log(uuidOfTargetTweet+"this should have remembered elons id")
-    console.log(x+"this should be the same number as above")
+    
     const targetTweetObj=tweetsData.filter(function(y){
     
         return y.uuid === x
         
     })[0]
-    console.log(targetTweetObj+"this should now give me an object")
-    const tweetReplyInput = document.getElementById("reply-input")
     
-    console.log(tweetReplyInput+"this should NOT be empty")
+    const tweetReplyInput = document.getElementById("reply-input-"+x)
+    console.log("reply-input-"+x)
         if(tweetReplyInput.value){
-            
             targetTweetObj.replies.unshift({
                 handle: `@Scrimba ✅`,
                 profilePic: `images/scrimbalogo.png`,
                 tweetText: tweetReplyInput.value,
-            }); 
-            
+            });  
         } 
+        else{
+            console.log("it doesnt work")
+        }
     const targetIndex = tweetsData.findIndex(function (tweet) {
         return tweet.uuid === x;
     });
           
-    tweetsData[targetIndex] = targetTweetObj;
     render()
-    console.log(targetTweetObj)       
+         
 }
       
 
@@ -162,26 +154,15 @@ function getFeedHtml(){
                                     <img src=${reply.profilePic} class="profile-pic">
                                     <div>
                                         <p class="handle">${reply.handle}</p>
-                                        <p class="tweet-text">${reply.tweetText}</p>
-                                        
-                                    </div>
-                                    
+                                        <p class="tweet-text">${reply.tweetText}</p>                                        
+                                    </div>                             
                                 </div>
                             </div>
 
                             `
             })
         }
-        
-        let replyInputHTML=`<div class="tweet-reply tweet-inner">
-                                <img src="images/scrimbalogo.png" class="profile-pic reply-pic">
-                                <div>
-                                    <textarea placeholder="Your Take On It?" id="reply-input"></textarea>
-                                    <button id="reply-btn">Reply</button>
-                                </div>
-                            </div>`
-
-        
+                
         feedHTML+=
         `<div class="tweet">
             <div class="tweet-inner">
@@ -210,7 +191,8 @@ function getFeedHtml(){
                 </div>            
             </div>
             <div class="hidden" id="replies-${tweets.uuid}">
-            ${replyInputHTML}
+                <textarea placeholder="your reply" id="reply-input-${tweets.uuid}"></textarea>
+                <button id="reply-btn" data-replybtn="${tweets.uuid}">Reply</button>
             ${repliesHTML}
             </div>
         </div>`
@@ -223,8 +205,6 @@ function render(){
     document.getElementById("feed").innerHTML=getFeedHtml()
     
 }
-
-
 
 render()
     
