@@ -109,8 +109,9 @@ function handleTweetReplyClick(x){
         
     })[0]
     console.log(targetTweetObj+"this should now give me an object")
-    const tweetReplyInput = document.getElementById(`reply-input-${uuidOfTargetTweet}`)
-    console.log(tweetReplyInput.value+"this should NOT be empty")
+    const tweetReplyInput = document.getElementById("reply-input")
+    
+    console.log(tweetReplyInput+"this should NOT be empty")
         if(tweetReplyInput.value){
             
             targetTweetObj.replies.unshift({
@@ -175,7 +176,7 @@ function getFeedHtml(){
         let replyInputHTML=`<div class="tweet-reply tweet-inner">
                                 <img src="images/scrimbalogo.png" class="profile-pic reply-pic">
                                 <div>
-                                    <textarea placeholder="Your Take On It?" id="reply-input-${uuidOfTargetTweet}"></textarea>
+                                    <textarea placeholder="Your Take On It?" id="reply-input"></textarea>
                                     <button id="reply-btn">Reply</button>
                                 </div>
                             </div>`
